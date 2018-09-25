@@ -20,9 +20,16 @@ INCLUDE_PATH = /usr/lib/avr/include
 # splint static check
 SPLINT       = splint test.c aes.c -I$(INCLUDE_PATH) +charindex -unrecog
 
+default: test.elf
 
+.SILENT:
+.PHONY:  lint clean
 
-client.o : aes_client.c aes.h aes.o
+test.hex : test.elf
+	echo copy object-code to new image and format in hex
+	$(OBJCOPY) ${OBJCOPYFLAFS} $< $@
+
+test.o : test.c aes.h aes.o
 	echo [CC] $@ $(CFLAGS)
 	$(CC) $(CFLAGS) -o  $@ $<
 
@@ -30,10 +37,18 @@ aes.o : aes.c aes.h
 	echo [CC] $@ $(CFLAGS)
 	$(CC) $(CFLAGS) -o $@ $<
 
-client : aes.o test.o
-	$(CC) aes.o test.o -o client
+test.elf : aes.o test.o
+	echo [LD] $@
+	$(LD) $(LDFLAGS) -o $@ $^
 
 
-clean :
-	@rm -f *.o
-	@echo "== cleaned =="
+clean:
+	rm -f *.OBJ *.LST *.o *.gch *.out *.hex *.map
+
+test:
+	make clean && make && ./test.elf
+	make clean && make AES192=1 && ./test.elf
+	make clean && make AES256=1 && ./test.elf
+
+lint:
+	$(call SPLINT)

@@ -8,8 +8,30 @@
 
 #define BLOCK_SIZE 16
 
-char padding[BLOCK_SIZE];
+struct padded_text
+{
+	char* text;
+	uint32_t size;
+};
 
+// prints string as hex
+static void phex(uint8_t* str)
+{
+
+#if defined(AES256)
+    uint8_t len = 32;
+#elif defined(AES192)
+    uint8_t len = 24;
+#elif defined(AES128)
+    uint8_t len = 16;
+#endif
+	printf("uint8_t len: %d\n", (char)len);
+	
+    unsigned char i;
+    for (i = 0; i < len; ++i)
+        printf("%.2x", str[i]);
+    printf("\n");
+}
 
 /**
  * @brief 
@@ -19,7 +41,7 @@ char padding[BLOCK_SIZE];
  * @param plaintext
  * @return 
  */
-char* pad(char plaintext[]){
+struct padded_text* pad(char plaintext[]){
 	int textLen = strlen(plaintext);
 	if (!textLen){
 		printf("textlen is zero");
@@ -30,8 +52,9 @@ char* pad(char plaintext[]){
 	int numPad = BLOCK_SIZE - remainder;
 	printf("remainder of %s is %d, need %d pad.\n", plaintext, remainder, numPad);
 
-	char* paddedPlaintext = malloc(sizeof(char) * (textLen + numPad));
-	memcpy(paddedPlaintext,  plaintext, textLen);
+	short mem_size = textLen + numPad;
+	char* paddedPlaintext = malloc(sizeof(char) * mem_size);
+	memcpy(paddedPlaintext, plaintext, textLen);
 	int i = 0;
 	
 	memcpy(paddedPlaintext + textLen + i++, " ", 1);
@@ -39,9 +62,14 @@ char* pad(char plaintext[]){
 		memcpy(paddedPlaintext + textLen + i, "0", 1);
 	}  
 	
-
 	printf("padded plaintext: %s\n", paddedPlaintext);
-	return paddedPlaintext;
+	
+	struct padded_text* pTextStruct;
+	pTextStruct->text = (uint8_t)paddedPlaintext[0];
+	pTextStruct->size = mem_size;
+	
+	printf("struct plaintext: %s\n", pTextStruct->text);
+	return pTextStruct;
 }
 
 char* depad(char paddedPlainText[]){
@@ -62,13 +90,19 @@ char* depad(char paddedPlainText[]){
 
 int main(int argc, char** argv)
 {
+	uint8_t key[] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
+	uint8_t iv[]  = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
 	char* pText = argv[2];	
 
-	char* padPlainttext = pad(pText);
+	struct padded_text* padPlainttext = pad(pText);
+	printf("padtext size: %d: , value: %s: ", padPlainttext->size, padPlainttext->text);
+	
+
+//	struct AES_ctx ctx;
+//    AES_init_ctx_iv(&ctx, key, iv);
+//    AES_CBC_encrypt_buffer(&ctx, padPlainttext, padPlainttext->size);
+
 
 	printf("depad.. after padPlainttext: %s\n", padPlainttext);
-	depad(padPlainttext);
-	
-	free(padPlainttext);
-//	free(paddedText);
+	depad(padPlainttext->text);
 }
