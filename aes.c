@@ -495,8 +495,11 @@ static void XorWithIv(uint8_t* buf, uint8_t* Iv)
   }
 }
 
-void AES_CBC_encrypt_buffer(struct AES_ctx *ctx,uint8_t* buf, uint32_t length)
-{
+void AES_CBC_encrypt_buffer(struct AES_ctx *ctx,uint8_t* buf, uint32_t length){
+//    printf("key:\n");
+//    puhex(ctx->RoundKey);
+//    printf("iv:\n");
+//    puhex(ctx->Iv);
   uintptr_t i;
   uint8_t *Iv = ctx->Iv;
   for (i = 0; i < length; i += AES_BLOCKLEN)
@@ -513,7 +516,12 @@ void AES_CBC_encrypt_buffer(struct AES_ctx *ctx,uint8_t* buf, uint32_t length)
 
 void AES_CBC_decrypt_buffer(struct AES_ctx* ctx, uint8_t* buf,  uint32_t length)
 {
-  uintptr_t i;
+//    printf("key:\n");
+//    puhex(ctx->RoundKey);
+//    printf("iv:\n");
+//    puhex(ctx->Iv);
+    
+    uintptr_t i;
   uint8_t storeNextIv[AES_BLOCKLEN];
   for (i = 0; i < length; i += AES_BLOCKLEN)
   {

@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+void phex(uint8_t* str);
+void puhex(uint8_t u[]);
 // #define the macros below to 1/0 to enable/disable the mode of operation.
 //
 // CBC enables AES encryption in CBC-mode of operation.
