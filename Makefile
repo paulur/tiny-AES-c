@@ -4,7 +4,7 @@
 CC           = gcc
 LD           = gcc
 CFLAGS       = -Wall -Os -c
-LDFLAGS      = -Wall -Os -Wl,-Map,test.map
+# LDFLAGS      = -Wall -Os -Wl,-Map,test.map
 ifdef AES192
 CFLAGS += -DAES192=1
 endif
