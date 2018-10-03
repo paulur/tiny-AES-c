@@ -1,0 +1,1 @@
+"/up -c 47.95.249.98  8340 0 1 en0 aa:cc:dd:00:00:00 192.168.0.122 8888 \"./\" ic \"not icmp and not (src net (10.0.0.0/8 or 172.16/12 or 192.168/16) and dst net (10.0.0.0/8 or 172.16/12 or 192.168/16)) and not host 47.95.249.98 and not host 239.255.255.250 and greater 65\""
