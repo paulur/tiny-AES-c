@@ -2,9 +2,9 @@
 #define _AES_H_
 
 #include <stdint.h>
+uint8_t* ucsp_encrypt(uint8_t key[], char* plaintext);
+char* ucsp_decrypt(uint8_t key[], uint8_t* encryption_return);
 
-void phex(uint8_t* str);
-void puhex(uint8_t u[]);
 // #define the macros below to 1/0 to enable/disable the mode of operation.
 //
 // CBC enables AES encryption in CBC-mode of operation.
